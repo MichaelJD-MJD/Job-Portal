@@ -90,8 +90,8 @@ const ApplyJob = () => {
               </button>
             </div>
             {/* Right section more jobs */}
-            <div className="w-full lg:w-1/3 lg:mt-0 lg:ml-8 space-y-5">
-              <h2>More Jobs From ${jobData.companyId.name}</h2>
+            <div className="w-full lg:w-1/3 mt-8 lg:mt-0 lg:ml-8 space-y-5">
+              <h2>More Jobs From {jobData.companyId.name}</h2>
               {jobs
                 .filter(
                   (job) =>
