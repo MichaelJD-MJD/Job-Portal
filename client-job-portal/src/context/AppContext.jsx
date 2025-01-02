@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
-import { jobsData } from "../assets/assets";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useAuth, useUser } from "@clerk/clerk-react";
 
 export const AppContext = createContext();
 
@@ -13,6 +13,9 @@ export const AppContextProvider = (props) => {
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
+  const { user } = useUser();
+  const { getToken } = useAuth();
+
   const [isSearched, setIsSearched] = useState(false);
 
   const [jobs, setJobs] = useState([]);
@@ -22,20 +25,22 @@ export const AppContextProvider = (props) => {
   const [companyToken, setCompanyToken] = useState(null);
   const [companyData, setCompanyData] = useState(null);
 
+  const [userData, setUserData] = useState(null);
+  const [userApplications, setUserApplications] = useState([]);
+
   // Function to fetch jobs data
   const fetchJobs = async () => {
     try {
-        const {data} = await axios.get(backendUrl + '/api/jobs');
+      const { data } = await axios.get(backendUrl + "/api/jobs");
 
-        if(data.success){
-            setJobs(data.jobs);
-            console.log(data.jobs);
-        }else{
-            toast.error(data.message)
-        }
-
+      if (data.success) {
+        setJobs(data.jobs);
+        console.log(data.jobs);
+      } else {
+        toast.error(data.message);
+      }
     } catch (error) {
-        toast.error(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -46,10 +51,29 @@ export const AppContextProvider = (props) => {
         headers: { token: companyToken },
       });
 
-      if(data.success){
+      if (data.success) {
         setCompanyData(data.company);
         console.log(data);
-      }else {
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // Function to fetch user data
+  const fetchUserData = async () => {
+    try {
+      const token = await getToken();
+
+      const { data } = await axios.get(backendUrl + "/api/users/user", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if(data.success){
+        setUserData(data.user);
+      }else{
         toast.error(data.message)
       }
 
@@ -69,10 +93,16 @@ export const AppContextProvider = (props) => {
   }, []);
 
   useEffect(() => {
-    if(companyToken){
-        fetchCompanyData();
+    if (companyToken) {
+      fetchCompanyData();
     }
-  }, [companyToken])
+  }, [companyToken]);
+
+  useEffect(() => {
+    if(user) {
+        fetchUserData();
+    }
+  }, [user])
 
   const value = {
     searchFilter,
