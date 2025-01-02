@@ -59,13 +59,14 @@ export const applyForJob = async (req, res) => {
 
 // Get user applied applications
 export const getUserJobApplications = async (req, res) => {
+    console.log("Auth:", req.auth); 
     try {
         const userId = req.auth.userId;
 
         const applications = await JobApplications.find({userId})
         .populate('companyId', 'name email image')
         .populate('jobId', 'title description location category level salary')
-        .exec();
+        ;
 
         if(!applications){
             return res.json({success: false, message: 'No Job applications found for this user'});
@@ -83,7 +84,7 @@ export const updateUserResume = async (req, res) => {
     try {
         const userId = req.auth.userId;
 
-        const resumeFile = req.resumeFile;
+        const resumeFile = req.file;
 
         const userData = await User.findById(userId);
 
