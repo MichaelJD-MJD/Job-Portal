@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { assets, jobsApplied } from "../assets/assets";
 import moment from "moment";
@@ -15,7 +15,7 @@ const Application = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [resume, setResume] = useState(null);
 
-  const { backendUrl, userData, userApplications, fetchUserData } =
+  const { backendUrl, userData, userApplications, fetchUserData, fetchUserApplications } =
     useContext(AppContext);
 
   const updateResume = async () => {
@@ -44,6 +44,12 @@ const Application = () => {
     setIsEdit(false);
     setResume(null);
   }
+
+  useEffect(() => {
+    if(user){
+      fetchUserApplications();
+    }
+  }, [user]);
 
   return (
     <>
@@ -77,7 +83,8 @@ const Application = () => {
             <div className="flex gap-2">
               <a
                 className="bg-blue-100 text-blue-600 px-4 py-2 rounded-lg"
-                href=""
+                href={userData.resume}
+                target="_blank"
               >
                 Resume
               </a>

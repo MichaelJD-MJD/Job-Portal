@@ -59,7 +59,6 @@ export const applyForJob = async (req, res) => {
 
 // Get user applied applications
 export const getUserJobApplications = async (req, res) => {
-    console.log("Auth:", req.auth); 
     try {
         const userId = req.auth.userId;
 
